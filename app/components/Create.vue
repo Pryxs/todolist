@@ -22,6 +22,8 @@ import Todo from '../models/Todo';
 import Home from './Home';
 const camera = require("nativescript-camera");
 const imageModule = require("tns-core-modules/ui/image");
+const filesystemModule = require('tns-core-modules/file-system');
+
 export default {
         components:{Home},
 
@@ -35,7 +37,7 @@ export default {
         },
       
         mounted(){
-            //alert(this.image)
+            //alert(filesystemModule.knownFolders.documents().path)
         },
 
         methods:{
@@ -57,7 +59,9 @@ export default {
 					    let img = new imageModule.Image();
 					    img.src = imageAsset;
 					    this.images.push(img);
-					    console.log('ive got '+this.images.length+' images now.');
+                        console.log('ive got '+this.images.length+' images now.');
+                        console.log(imageAsset)
+                    
 				    })
 				.catch(e => {
 					console.log('Error:', e);
