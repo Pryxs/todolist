@@ -6,10 +6,12 @@
                 <TextField class="input" hint="nom" v-model="name"/>
                 <TextField class="input" hint="description" v-model="content"/>  
                 <Button text="Camera" @tap="takePicture"/>
-                
+                <WrapLayout>
+                     <Image v-for="img in images" :src="img.src" width="75" height="75" ></Image>
+                </WrapLayout>
             </StackLayout>          
                 <Button row="1" text='valider' class="validate" @tap="Validate"></Button>
-                <Button row="2" text="andonner" @tap="$navigateBack"/>
+                <Button row="2" text="abandonner" @tap="$navigateBack"/>
             </GridLayout>
     </Page>
 </template>
@@ -20,7 +22,6 @@ import Todo from '../models/Todo';
 import Home from './Home';
 const camera = require("nativescript-camera");
 const imageModule = require("tns-core-modules/ui/image");
-
 export default {
         components:{Home},
 
@@ -28,43 +29,50 @@ export default {
         return {
                 name:"",
                 content:"",
-                image:''
+                images:[]
             };
 
         },
+      
+        mounted(){
+            //alert(this.image)
+        },
 
-         methods:{
+        methods:{
+
             Validate(){
-            let item = new Todo(this.name, this.content)
-            if(item.name){
-                this.$navigateTo(Home, {props:{newItem : item}}).catch(error => console.log(error));
-                this.$store.commit('saveTodo', item)
-            } else {
-                alert("Il faut donner un nom !");
-            }
+                let item = new Todo(this.name, this.content)
+                if(item.name){
+                    this.$navigateTo(Home, {props:{newItem : item}}).catch(error => console.log(error));
+                    this.$store.commit('saveTodo', item)
+                } else {
+                    alert("Il faut donner un nom !");
+                }
             },
 
             takePicture(){
-               camera.requestPermissions().then(
-                    function success() {
-                            camera.takePicture()   
-                                .then(function (imageAsset) {
-                                    //let img = new imageModule.Image();
-                                    //img.src = imageAsset;
-                                    //this.image = img;
-                                    alert('img');
-
-                                }).catch(function (err) {
-                                    console.log("Error -> " + err.message);
-                                });                  
-                            }, 
-                    function failure() {
-                        alert("fail")
-                    }
-                );
+            
+                camera.requestPermissions().then(() => {
+				    camera.takePicture({ width: 300, height: 300, keepAspectRatio: true, saveToGallery:false, allowsEditing:false}).then(imageAsset => {
+					    let img = new imageModule.Image();
+					    img.src = imageAsset;
+					    this.images.push(img);
+					    console.log('ive got '+this.images.length+' images now.');
+				    })
+				.catch(e => {
+					console.log('Error:', e);
+				});
+			})
+			.catch(e => {
+				console.log('Error requesting permission');
+			});
+            
+                    
             }
         }
-    };
+       
+}
+
 </script> 
 
 <style scoped lang="scss">
