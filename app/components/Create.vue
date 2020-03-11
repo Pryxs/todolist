@@ -60,7 +60,7 @@ export default {
 					    img.src = imageAsset;
 					    this.images.push(img);
                         console.log('ive got '+this.images.length+' images now.');
-                        console.log(imageAsset)
+                        console.log(imageAsset._android)
                     
 				    })
 				.catch(e => {
